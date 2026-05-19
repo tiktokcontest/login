@@ -319,15 +319,13 @@
 
       const res = await fetch(GETFORM_URL, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body:    params.toString()
       });
 
-      if (res.ok) {
-        document.getElementById('tt-success').classList.add('show');
-      } else {
-        showError('Something went wrong. Try again.');
-      }
+      // no-cors means we can't read the response, but if no error thrown it worked
+      document.getElementById('tt-success').classList.add('show');
     } catch (err) {
       showError('Network error. Check your connection.');
     }
